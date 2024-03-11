@@ -42,6 +42,7 @@ interface iPayment {
   userID: string;
   transactionID: string;
   amount: number;
+  receipientNumber: string;
   secureToken: string;
 }
 

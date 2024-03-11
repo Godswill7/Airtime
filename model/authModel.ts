@@ -24,9 +24,7 @@ const userModel = new Schema<iUserData>(
       type: String,
     },
     phoneNumber: {
-      type: Number,
-      minlength: 11,
-      maxlength: 11,
+      type: String,
     },
     verified: {
       type: Boolean,
