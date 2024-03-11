@@ -17,6 +17,7 @@
     "@types/express": "^4.17.20",
     "@types/helmet": "^4.0.0",
     "@types/joi": "^17.2.3",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/morgan": "^1.9.7",
     "@types/multer": "^1.4.9",
     "@types/streamifier": "^0.1.1",
