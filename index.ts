@@ -1,7 +1,9 @@
 import express, { Application } from "express";
 import { Database } from "./config/database";
+import env from "dotenv"
+env.config()
 
-const port: number = 4000;
+const port: number = parseInt(process.env.PORT!);
 const app: Application = express();
 
 const server = app.listen(port, () => {
@@ -9,7 +11,7 @@ Database()
 });
 
 process.on("uncaughtException", (error: Error | any) => {
-  console.log(`Server is shutting down due to ${error}`);
+  console.log(`Server is shutting down due to ${error.message}`);
   process.exit(1);
 });
 process.on("unhandledRejection", (reason: any) => {

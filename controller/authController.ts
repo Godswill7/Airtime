@@ -4,7 +4,7 @@ import { HTTP } from "../utils/interface";
 import authModel from "../model/authModel";
 import { hash, genSalt, compare } from "bcrypt";
 import { randomBytes } from "crypto";
-import {sign} from "jsonwebtoken"
+import { sign } from "jsonwebtoken";
 import env from "dotenv";
 env.config();
 
@@ -13,14 +13,20 @@ export const createUser = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const { userName, email, password } = req.body;
+    const { email, password } = req.body;
 
     const encrypt = await genSalt(10);
     const decipher = await hash(password, encrypt);
     const token = randomBytes(2).toString("hex");
 
+     const usernameBase = email.split("@")[0];
+
+     const randomNum = Math.floor(Math.random() * 10000).toString();
+
+     const username = `${usernameBase}_${randomNum}`;
+
     const user = await authModel.create({
-      userName,
+      userName:username,
       email,
       token,
       password: decipher,
