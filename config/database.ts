@@ -2,7 +2,7 @@ import { connect } from "mongoose"
 // import env from "dotenv"
 // env.config()
 
-const DB = "mongodb://127.0.0.1:27017/AirtimeDB"
+const DB = "mongodb://127.0.0.1:27017/Airtime"
 // const DB = process.env.DB_STRING!;
 
 export const Database = async () => {

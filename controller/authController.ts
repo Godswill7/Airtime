@@ -1,10 +1,10 @@
-import { sendAccountMail } from "./../utils/email";
+// import { sendAccountMail } from "./../utils/email";
 import { Request, Response } from "express";
 import { HTTP } from "../error/mainError";
 import authModel from "../model/authModel";
-import bcrypt from "bcrypt";
-import crypto from "crypto";
-import { Role } from "../config/role";
+import { hash, genSalt, compare } from "bcrypt";
+import { randomBytes } from "crypto";
+// import { Role } from "../config/role";
 import env from "dotenv";
 env.config();
 
@@ -15,21 +15,20 @@ export const createUser = async (
   try {
     const { userName, email, password } = req.body;
 
-    const encrypt = await bcrypt.genSalt(10);
-    const decipher = await bcrypt.hash(password, encrypt);
-    const token = crypto.randomBytes(2).toString("hex");
+    const encrypt = await genSalt(10);
+    const decipher = await hash(password, encrypt);
+    const token = randomBytes(2).toString("hex");
 
     const user = await authModel.create({
       userName,
       email,
       token,
       password: decipher,
-    //   role: Role.USER,
     });
 
-    sendAccountMail(user).then(() => {
-      console.log("Mail Sent ...");
-    });
+    // sendAccountMail(user).then(() => {
+    //   console.log("Mail Sent ...");
+    // });
 
     return res.status(HTTP.CREATE).json({
       message: "User created Successfully",
@@ -50,7 +49,7 @@ export const signInUser = async (req: Request, res: Response) => {
     const user = await authModel.findOne({ email });
 
     if (user) {
-      const checkPassword = await bcrypt.compare(password, user.password);
+      const checkPassword = await compare(password, user.password);
       if (checkPassword) {
         if (user.verified && user.token === "") {
           return res.status(HTTP.OK).json({
