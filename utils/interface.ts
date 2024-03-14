@@ -1,8 +1,20 @@
 import { Document } from "mongoose";
 import errorBuilder from "../error/errorHandler";
-import { Request, Response,NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { mainError } from "../error/mainError";
 
+export interface PaystackTransactionData {
+  email: string;
+  amount: number;
+  callback_url: string;
+  metadata: {
+    custom_fields: {
+      display_name: string;
+      variable_name: string;
+      value: string;
+    }[];
+  };
+}
 
 export const errorHandler = (
   err: mainError,
@@ -30,11 +42,11 @@ interface iUser {
   userName: string;
   email: string;
   phoneNumber: string;
-  password: string; 
-  image: string; 
-  imageID: string; 
+  password: string;
+  image: string;
+  imageID: string;
   verified: boolean;
-  token: string; 
+  token: string;
   walletBalance: string;
 }
 

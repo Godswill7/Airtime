@@ -1,3 +1,4 @@
+// import { initiatePaystackTransaction } from './payStack';
 import { randomBytes } from "crypto";
 import { Request, Response } from "express";
 import { HTTP } from "../utils/interface";
@@ -10,14 +11,22 @@ export const createPayment = async (req: Request, res: Response) => {
     const { userID } = req.params;
     const { receipientNumber, amount } = req.body;
 
-    if (!userID) {
+     if (!userID || !receipientNumber || !amount) {
+       return res.status(HTTP.BAD_REQUEST).json({
+         message: "Invalid request data",
+         status: HTTP.BAD_REQUEST,
+       });
+    }
+    
+     const user: any = await authModel.findById(userID);
+
+    if (!user) {
       return res.status(HTTP.BAD_REQUEST).json({
           message: "User does not exist",
           status:HTTP.BAD_REQUEST
       });
     }
 
-    const user: any = await authModel.findById(userID);
 
     if (user.walletBalance < amount) {
       return res.status(HTTP.BAD_REQUEST).json({
@@ -25,6 +34,12 @@ export const createPayment = async (req: Request, res: Response) => {
           status:HTTP.BAD_REQUEST
       });
     }
+
+    const updateWalletBalance = user.walletBalance - amount;
+
+    await authModel.findByIdAndUpdate(userID, {
+      walletBalance: updateWalletBalance,
+    });
 
     //   const timestamp = Date.now().toString();
     //   const random = Math.floor(Math.random() * 10000).toString();
@@ -54,3 +69,57 @@ export const createPayment = async (req: Request, res: Response) => {
     });
   }
 };
+
+// export const creditAccountExternally = async (
+//   req: Request,
+//   res: Response
+// ) => {
+//   try {
+//     const { userID } = req.params;
+//     const { amount } = req.body;
+
+//     if (!userID || !amount) {
+//       return res.status(HTTP.BAD_REQUEST).json({
+//         message: "Invalid request data",
+//         status: HTTP.BAD_REQUEST,
+//       });
+//     }
+
+//     const user = await authModel.findById(userID);
+
+//     if (!user) {
+//       return res.status(HTTP.BAD_REQUEST).json({
+//         message: "User does not exist",
+//         status: HTTP.BAD_REQUEST,
+//       });
+//     }
+
+//     const accessCode = await initiatePaystackTransaction({
+//       email: user.email,
+//       amount: amount * 100,
+//       callback_url: "https://your-callback-url.com",
+//       metadata: {
+//         custom_fields: [
+//           {
+//             display_name: "User ID",
+//             variable_name: "user_id",
+//             value: userID,
+//           },
+//         ],
+//       },
+//     });
+
+//     return res.status(HTTP.OK).json({
+//       message: "Paystack transaction initiated successfully",
+//       accessCode,
+//     });
+//   } catch (error:any) {
+//     console.error(`Error initiating Paystack transaction: ${error.message}`);
+//     return res.status(HTTP.BAD_REQUEST).json({
+//       message: "Internal Server Error",
+//       status: HTTP.BAD_REQUEST,
+//     });
+//   }
+// };
+
+
